@@ -36,7 +36,21 @@ jobs:
           SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
         run: |
           pip install --upgrade schemachange snowflake-connector-python
-          echo "Using connections.toml workaround for OCSP issue"
+
+          echo "Creating .schemachange/connections.toml"
+          mkdir -p .schemachange
+          cat <<EOF > .schemachange/connections.toml
+          [connections.default]
+          account = "${SF_ACCOUNT}"
+          user = "${SF_USERNAME}"
+          password = "${SNOWFLAKE_PASSWORD}"
+          role = "${SF_ROLE}"
+          warehouse = "${SF_WAREHOUSE}"
+          database = "${SF_DATABASE}"
+          ocsp_fail_open = true
+          EOF
+
+          echo "Running schemachange with OCSP bypass"
           schemachange -f $GITHUB_WORKSPACE/migrations \
             --connection-name default \
             -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY \
