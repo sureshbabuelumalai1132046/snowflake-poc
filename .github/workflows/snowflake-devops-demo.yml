@@ -37,16 +37,22 @@ jobs:
         run: |
           pip install --upgrade schemachange snowflake-connector-python
 
-          echo "Running schemachange with direct CLI connection parameters"
+          mkdir -p $HOME/.schemachange
+          cat <<EOF > $HOME/.schemachange/connections.toml
+          [connections.default]
+          account = "${SF_ACCOUNT}"
+          user = "${SF_USERNAME}"
+          password = "${SNOWFLAKE_PASSWORD}"
+          role = "${SF_ROLE}"
+          warehouse = "${SF_WAREHOUSE}"
+          database = "${SF_DATABASE}"
+          ocsp_fail_open = true
+          EOF
+
           schemachange -f $GITHUB_WORKSPACE/migrations \
-            -a $SF_ACCOUNT \
-            -u $SF_USERNAME \
-            -p $SNOWFLAKE_PASSWORD \
-            -r $SF_ROLE \
-            -w $SF_WAREHOUSE \
-            -d $SF_DATABASE \
-            --ocsp-fail-open \
             -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY \
-            --create-change-history-table
+            --create-change-history-table \
+            --connection-name default
+
 
 
