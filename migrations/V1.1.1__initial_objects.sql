@@ -1,3 +1,4 @@
+
 USE DATABASE snow_devops_db;
 USE SCHEMA snow_devops_sch;
 
