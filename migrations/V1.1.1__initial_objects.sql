@@ -1,0 +1,8 @@
+USE DATABASE snow_devops_db;
+USE SCHEMA snow_devops_sch;
+
+CREATE TABLE HELLO_TREDENCE 
+(
+  FIRST_NAME VARCHAR,
+  LAST_NAME VARCHAR
+);
