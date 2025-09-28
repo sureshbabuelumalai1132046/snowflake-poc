@@ -34,12 +34,10 @@ jobs:
           SF_WAREHOUSE: ${{ secrets.SF_WAREHOUSE }}
           SF_DATABASE: ${{ secrets.SF_DATABASE }}
           SNOWFLAKE_PASSWORD: ${{ secrets.SF_PASSWORD }}
-          OCSP_FAIL_OPEN: "true" 
         run: |
-          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
-          python --version
-          echo "Step 1: Installing schemachange"
-          pip install schemachange
-          
-          echo "Step 2: Running schemachange"
-          schemachange -f $GITHUB_WORKSPACE/migrations -a $SF_ACCOUNT -u $SF_USERNAME -r $SF_ROLE -w $SF_WAREHOUSE -d $SF_DATABASE -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY --create-change-history-table
+          pip install --upgrade schemachange snowflake-connector-python
+          echo "Using connections.toml workaround for OCSP issue"
+          schemachange -f $GITHUB_WORKSPACE/migrations \
+            --connection-name default \
+            -c $SF_DATABASE.SCHEMACHANGE.CHANGE_HISTORY \
+            --create-change-history-table
